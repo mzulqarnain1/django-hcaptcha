@@ -2,6 +2,8 @@
 Django hCaptcha
 ===============
 
+*A fork of Django hCaptcha by Andrej Zbín, Modified for Django 1.10 due to custom needs*
+
 Django hCaptcha provides a simple way to protect your django forms using `hCaptcha <https://www.hcaptcha.com/>`_.
 
 Configuration
