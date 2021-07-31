@@ -4,6 +4,14 @@ from django import forms
 
 from hcaptcha.settings import JS_API_URL, SITEKEY
 
+import json
+
+import django
+from django import forms
+from django.template.loader import render_to_string
+from django.utils.safestring import mark_safe
+from django.utils.translation import get_language
+
 
 class hCaptchaWidget(forms.Widget):
     template_name = 'hcaptcha_widget.html'
@@ -15,14 +23,36 @@ class hCaptchaWidget(forms.Widget):
     def value_from_datadict(self, data, files, name):
         return data.get('h-captcha-response')
 
-    def build_attrs(self, base_attrs, extra_attrs=None):
-        attrs = super().build_attrs(base_attrs, extra_attrs)
-        attrs['data-sitekey'] = SITEKEY
-        return attrs
+    def render(self, name, value, attrs=None, renderer=None):
+        if django.VERSION < (1, 11):
+            return mark_safe(render_to_string(
+                self.template_name,
+                self.get_context(name, value, attrs)
+            ))
+        else:
+            return super(hCaptchaWidget, self).render(
+                name, value, attrs=attrs, renderer=renderer
+            )
 
     def get_context(self, name, value, attrs):
-        context = super().get_context(name, value, attrs)
-        context['api_url'] = JS_API_URL
-        if self.extra_url:
-            context['api_url'] += '?' + urlencode(self.extra_url)
+
+        try:
+            lang = attrs['lang']
+        except KeyError:
+            # Get the generic language code
+            lang = get_language().split('-')[0]
+
+        context = {
+            "widget": {
+                "attrs": self.build_attrs(attrs)
+            }
+        }
+        context['widget']['attrs']['data-sitekey'] = SITEKEY
+        context.update({
+            'api_url': JS_API_URL,
+            'data-sitekey': SITEKEY,
+            'lang': lang,
+            'options': mark_safe(json.dumps(self.attrs, indent=2)),
+        })
+
         return context
