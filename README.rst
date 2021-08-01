@@ -4,7 +4,7 @@ Django hCaptcha
 
 *A fork of django-hCaptcha by Andrej Zbín, Modified for Django 1.10 for hCaptcha support in legacy systems*
 
-Django hCaptcha provides a simple way to protect your django forms using `hCaptcha <https://www.hcaptcha.com/>`_.
+Django-110-hCaptcha provides a simple way to protect your django 1.10 forms using `hCaptcha <https://www.hcaptcha.com/>`_.
 
 Configuration
 -------------
